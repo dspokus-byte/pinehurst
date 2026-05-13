@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pinehurst Golf Trip Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1rem;}
+.t{max-width:720px;margin:0 auto;padding:1rem 0;}
+h1{font-size:22px;font-weight:600;margin-bottom:4px;}
+.sub{font-size:14px;color:#666;margin-bottom:1.5rem;}
+.vtabs{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid #ddd;border-radius:8px;overflow:hidden;width:fit-content;}
+.vtab{padding:8px 20px;font-size:14px;cursor:pointer;background:#fff;color:#666;border:none;border-right:1px solid #ddd;transition:all 0.15s;}
+.vtab:last-child{border-right:none;}
+.vtab:hover{background:#f0efeb;}
+.vtab.active{background:#1a1a1a;color:#fff;font-weight:500;}
+.dtabs{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.dtab{padding:7px 14px;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:#666;line-height:1.3;text-align:left;transition:all 0.15s;}
+.dtab:hover{background:#f0efeb;}
+.dtab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.dtab .dn{font-weight:600;display:block;font-size:13px;}
+.dtab .dc{font-size:11px;opacity:0.75;display:block;}
+.cban{background:#fff;border:1px solid #e8e6e0;border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;display:flex;gap:20px;flex-wrap:wrap;}
+.cbi{font-size:13px;color:#666;}
+.cbi span{font-weight:600;color:#1a1a1a;}
+.sl{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;margin-top:1.25rem;}
+.sl:first-child{margin-top:0;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;}
+.pc{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1rem;}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+.av-d{background:#E6F1FB;color:#0C447C;}
+.av-v{background:#E1F5EE;color:#085041;}
+.av-j{background:#FAEEDA;color:#633806;}
+.av-r{background:#FAECE7;color:#993C1D;}
+.pname{font-size:14px;font-weight:600;color:#1a1a1a;}
+.phdcp{font-size:11px;color:#888;margin-top:1px;}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.row label{font-size:13px;color:#666;flex:1;}
+.si{width:64px;padding:5px 8px;font-size:14px;border:1px solid #ddd;border-radius:8px;background:#f5f4f0;color:#1a1a1a;text-align:center;}
+.si:focus{outline:none;border-color:#999;}
+.stat{display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:#f5f4f0;border-radius:8px;font-size:12px;margin-bottom:5px;}
+.stl{color:#666;}
+.stv{font-weight:600;color:#1a1a1a;}
+.badge{font-size:11px;padding:2px 7px;border-radius:999px;font-weight:600;}
+.bd2{background:#E1F5EE;color:#085041;}
+.bd1{background:#EAF3DE;color:#27500A;}
+.b0{background:#f0efeb;color:#666;border:1px solid #e0ddd8;}
+.bu1{background:#FAEEDA;color:#633806;}
+.bu2{background:#FAECE7;color:#993C1D;}
+.cbtn{width:100%;padding:10px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:1.25rem;}
+.cbtn:hover{background:#333;}
+.card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;overflow:hidden;margin-bottom:1.25rem;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+.tbl th{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;padding:7px 10px;text-align:right;background:#f5f4f0;border-bottom:1px solid #e8e6e0;}
+.tbl th:first-child{text-align:left;}
+.tbl td{padding:8px 10px;text-align:right;border-bottom:1px solid #e8e6e0;color:#1a1a1a;}
+.tbl td:first-child{text-align:left;font-weight:500;}
+.tbl tr:last-child td{border-bottom:none;}
+.mu{color:#999;}
+.win{color:#0F6E56;font-weight:600;}
+.los{color:#993C1D;}
+.lbrow{display:grid;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid #e8e6e0;font-size:13px;}
+.lbrow:last-child{border-bottom:none;}
+.lbhdr{background:#f5f4f0;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;}
+.pn{font-weight:600;color:#1a1a1a;}
+.tr{text-align:right;}
+.pos1{color:#633806;background:#FAEEDA;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+.posn{font-weight:500;color:#999;text-align:center;font-size:13px;}
+.winner-banner{background:#fff;border:2px solid #1D9E75;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:14px;}
+.wname{font-size:20px;font-weight:700;color:#0F6E56;}
+.wlabel{font-size:12px;color:#888;}
+.wsub{font-size:13px;color:#666;margin-top:2px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+.met{background:#f5f4f0;border-radius:8px;padding:10px 12px;}
+.mlabel{font-size:11px;color:#888;margin-bottom:4px;}
+.mval{font-size:19px;font-weight:700;color:#1a1a1a;}
+.msub{font-size:11px;color:#999;margin-top:2px;}
+.hp{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;font-weight:600;}
+.hp-s{background:#f0efeb;color:#888;}
+.hp-d{background:#E1F5EE;color:#085041;}
+.hp-u{background:#FAECE7;color:#993C1D;}
+.refcard{background:#f5f4f0;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.refcard .rt{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:10px;}
+.refgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.refitem{font-size:12px;}
+.refname{font-weight:600;color:#1a1a1a;margin-bottom:3px;}
+.refrow{color:#888;}
+.refrow span{color:#1a1a1a;}
+.rules{background:#f5f4f0;border-radius:12px;padding:1rem 1.25rem;margin-top:1.25rem;}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;}
+.ri{font-size:12px;color:#666;display:flex;align-items:center;gap:6px;}
+.rd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.nodata{text-align:center;padding:2rem;color:#888;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="t">
+  <h1>Pinehurst Golf Trip</h1>
+  <div class="sub">4-day competition &middot; Course-adjusted handicaps &middot; Daily adjustments</div>
+
+  <div class="vtabs">
+    <button class="vtab active" onclick="setView('scoring')">Scoring</button>
+    <button class="vtab" onclick="setView('summary')">Summary</button>
+  </div>
+
+  <div id="v-scoring">
+    <div class="dtabs">
+      <button class="dtab active" onclick="setDay(0)"><span class="dn">Day 1</span><span class="dc">Mid South Club</span></button>
+      <button class="dtab" onclick="setDay(1)"><span class="dn">Day 2</span><span class="dc">Mid Pines Inn</span></button>
+      <button class="dtab" onclick="setDay(2)"><span class="dn">Day 3</span><span class="dc">Legacy Golf Links</span></button>
+      <button class="dtab" onclick="setDay(3)"><span class="dn">Day 4</span><span class="dc">Pinehurst No. 3</span></button>
+    </div>
+    <div class="cban" id="cban"></div>
+    <div class="sl">Enter gross scores</div>
+    <div class="pgrid" id="pgrid"></div>
+    <button class="cbtn" onclick="calculate()">Calculate scores &amp; adjustments</button>
+    <div class="sl">Today's leaderboard</div>
+    <div class="card" id="today-lb"></div>
+    <div class="sl">Running totals</div>
+    <div class="card" id="running-totals"></div>
+    <div class="rules">
+      <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Adjustment rules</div>
+      <div class="rg">
+        <div class="ri"><span class="rd" style="background:#1D9E75"></span>Net &minus;3 or better &rarr; &minus;2 strokes</div>
+        <div class="ri"><span class="rd" style="background:#639922"></span>Net &minus;1 to &minus;2 &rarr; &minus;1 stroke</div>
+        <div class="ri"><span class="rd" style="background:#888"></span>Net E to +2 &rarr; no change</div>
+        <div class="ri"><span class="rd" style="background:#BA7517"></span>Net +3 to +5 &rarr; +1 stroke</div>
+        <div class="ri"><span class="rd" style="background:#D85A30"></span>Net +6 or worse &rarr; +2 strokes</div>
+        <div class="ri"><span class="rd" style="background:#888"></span>Floor/ceiling: start &plusmn;2 (fixed for trip)</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="v-summary" style="display:none;">
+    <div id="summary-content"></div>
+  </div>
+</div>
+
+<script>
+const COURSES=[
+  {name:'Mid South Club',par:71,rating:69.7,slope:125},
+  {name:'Mid Pines Inn',par:72,rating:69.5,slope:128},
+  {name:'Legacy Golf Links',par:72,rating:69.6,slope:130},
+  {name:'Pinehurst No. 3',par:68,rating:66.1,slope:123},
+];
+const GOLFERS=[
+  {id:'david', name:'David', init:'DA',av:'av-d',start:9, floor:7, ceil:11},
+  {id:'vince', name:'Vince', init:'VM',av:'av-v',start:12,floor:10,ceil:14},
+  {id:'jesse', name:'Jesse', init:'JK',av:'av-j',start:19,floor:17,ceil:21},
+  {id:'jeremy',name:'Jeremy',init:'JP',av:'av-r',start:17,floor:15,ceil:19},
+];
+
+function cHdcp(idx,c){return Math.round(idx*(c.slope/113)+(c.rating-c.par));}
+function getAdj(nvp){if(nvp<=-3)return -2;if(nvp<=-1)return -1;if(nvp<=2)return 0;if(nvp<=5)return 1;return 2;}
+function adjBadge(a){return{'-2':['&minus;2 strokes','bd2'],'-1':['&minus;1 stroke','bd1'],'0':['no change','b0'],'1':['+1 stroke','bu1'],'2':['+2 strokes','bu2']}[String(a)];}
+function fmtNet(n){if(n===null)return'&mdash;';return(n>=0?'+':'')+n;}
+
+const S={
+  view:'scoring',day:0,
+  hdcps:{david:[9,9,9,9],vince:[12,12,12,12],jesse:[19,19,19,19],jeremy:[17,17,17,17]},
+  grosses:{david:[null,null,null,null],vince:[null,null,null,null],jesse:[null,null,null,null],jeremy:[null,null,null,null]},
+  nets:{david:[null,null,null,null],vince:[null,null,null,null],jesse:[null,null,null,null],jeremy:[null,null,null,null]},
+  adjs:{david:[null,null,null,null],vince:[null,null,null,null],jesse:[null,null,null,null],jeremy:[null,null,null,null]},
+};
+
+function setView(v){
+  S.view=v;
+  document.querySelectorAll('.vtab').forEach(t=>t.classList.toggle('active',t.textContent.toLowerCase()===v));
+  document.getElementById('v-scoring').style.display=v==='scoring'?'':'none';
+  document.getElementById('v-summary').style.display=v==='summary'?'':'none';
+  if(v==='summary')renderSummary();
+}
+
+function setDay(d){
+  S.day=d;
+  document.querySelectorAll('.dtab').forEach((t,i)=>t.classList.toggle('active',i===d));
+  renderBanner();renderGrid();renderTodayLB();renderRunning();
+}
+
+function renderBanner(){
+  const c=COURSES[S.day];
+  document.getElementById('cban').innerHTML=
+    `<div class="cbi">Course <span>${c.name}</span></div>
+     <div class="cbi">Par <span>${c.par}</span></div>
+     <div class="cbi">Rating <span>${c.rating}</span></div>
+     <div class="cbi">Slope <span>${c.slope}</span></div>`;
+}
+
+function renderGrid(){
+  const d=S.day;const c=COURSES[d];
+  const g=document.getElementById('pgrid');g.innerHTML='';
+  GOLFERS.forEach(p=>{
+    const idx=S.hdcps[p.id][d];
+    const ch=cHdcp(idx,c);
+    const gross=S.grosses[p.id][d];
+    const net=gross!==null?gross-ch:null;
+    const nvp=net!==null?net-c.par:null;
+    const adj=nvp!==null?getAdj(nvp):null;
+    const ab=adj!==null?adjBadge(adj):null;
+    const nextIdx=adj!==null?Math.max(p.floor,Math.min(p.ceil,idx+adj)):null;
+    const div=document.createElement('div');div.className='pc';
+    div.innerHTML=`
+      <div class="ph"><div class="av ${p.av}">${p.init}</div>
+        <div><div class="pname">${p.name}</div>
+        <div class="phdcp">Index ${idx} &rarr; Course hdcp ${ch} &nbsp;|&nbsp; Floor ${p.floor} / Ceil ${p.ceil}</div></div>
+      </div>
+      <div class="row"><label>Gross score</label><input type="number" class="si" id="sc-${p.id}" value="${gross!==null?gross:''}" placeholder="&mdash;" min="55" max="130"></div>
+      ${nvp!==null?`
+      <div class="stat"><span class="stl">Net score</span><span class="stv">${net}</span></div>
+      <div class="stat"><span class="stl">Net vs par</span><span class="stv">${fmtNet(nvp)}</span></div>
+      <div class="stat"><span class="stl">Adjustment</span><span class="badge ${ab[1]}">${ab[0]}</span></div>
+      <div class="stat"><span class="stl">Next handicap</span><span class="stv">${nextIdx}</span></div>`:''}`;
+    g.appendChild(div);
+  });
+}
+
+function calculate(){
+  const d=S.day;const c=COURSES[d];
+  GOLFERS.forEach(p=>{
+    const val=parseInt(document.getElementById('sc-'+p.id).value);
+    if(isNaN(val))return;
+    S.grosses[p.id][d]=val;
+    const idx=S.hdcps[p.id][d];
+    const ch=cHdcp(idx,c);
+    const net=val-ch;
+    const nvp=net-c.par;
+    S.nets[p.id][d]=nvp;
+    const adj=getAdj(nvp);
+    S.adjs[p.id][d]=adj;
+    const newIdx=Math.max(p.floor,Math.min(p.ceil,idx+adj));
+    if(d<3){
+      S.hdcps[p.id][d+1]=newIdx;
+      for(let i=d+2;i<4;i++){if(S.grosses[p.id][i]===null)S.hdcps[p.id][i]=newIdx;}
+    }
+  });
+  renderGrid();renderTodayLB();renderRunning();
+}
+
+function getCumTotals(){
+  return GOLFERS.map(p=>{
+    let cumNet=0;let cumGross=0;let pl=0;
+    S.nets[p.id].forEach((n,i)=>{if(n!==null){cumNet+=n;pl++;cumGross+=S.grosses[p.id][i];}});
+    const finalIdx=S.hdcps[p.id][3];
+    const totalAdj=finalIdx-p.start;
+    return{...p,cumNet,cumGross,pl,finalIdx,totalAdj};
+  });
+}
+
+function renderTodayLB(){
+  const d=S.day;const c=COURSES[d];
+  const cum=getCumTotals();
+  const rows=cum.map(p=>({...p,todayNet:S.nets[p.id][d],idx:S.hdcps[p.id][d],ch:cHdcp(S.hdcps[p.id][d],c)}))
+    .sort((a,b)=>{
+      if(a.pl===0&&b.pl===0)return 0;
+      if(a.pl===0)return 1;if(b.pl===0)return -1;
+      return a.cumNet-b.cumNet;
+    });
+  const cols='28px 1fr 50px 50px 60px 60px';
+  let h=`<div class="lbrow lbhdr" style="grid-template-columns:${cols}"><span></span><span>Golfer</span><span class="tr">Index</span><span class="tr">C.Hdcp</span><span class="tr">Today</span><span class="tr">Total</span></div>`;
+  rows.forEach((p,i)=>{
+    const hasTodayScore=p.todayNet!==null;
+    const pos=i===0&&p.pl>0?`<div class="pos1">1</div>`:`<div class="posn">${i+1}</div>`;
+    const td=hasTodayScore?fmtNet(p.todayNet):'&mdash;';
+    const tc=p.pl>0?fmtNet(p.cumNet):'&mdash;';
+    const tcc=p.pl===0?'mu':p.cumNet<0?'win':p.cumNet>8?'los':'';
+    const tdc=hasTodayScore&&p.todayNet<0?'win':hasTodayScore&&p.todayNet>5?'los':'';
+    h+=`<div class="lbrow" style="grid-template-columns:${cols}">${pos}<span class="pn">${p.name}</span><span class="tr mu">${p.idx}</span><span class="tr mu">${p.ch}</span><span class="tr ${tdc}">${td}</span><span class="tr ${tcc}">${tc}</span></div>`;
+  });
+  document.getElementById('today-lb').innerHTML=h;
+}
+
+function renderRunning(){
+  const cum=getCumTotals().sort((a,b)=>a.pl===0&&b.pl===0?0:a.pl===0?1:b.pl===0?-1:a.cumNet-b.cumNet);
+  const cols='1fr 55px 55px 55px 55px 65px 70px';
+  let h=`<div class="lbrow lbhdr" style="grid-template-columns:${cols}"><span>Golfer</span><span class="tr">D1</span><span class="tr">D2</span><span class="tr">D3</span><span class="tr">D4</span><span class="tr">Gross</span><span class="tr">Net total</span></div>`;
+  cum.forEach(p=>{
+    const days=S.nets[p.id].map(n=>n===null?`<span class="tr mu" style="display:block">&mdash;</span>`:`<span class="tr ${n<=-3?'win':n>=6?'los':''}" style="display:block">${fmtNet(n)}</span>`).join('');
+    const tcc=p.pl===0?'mu':p.cumNet<0?'win':p.cumNet>8?'los':'';
+    h+=`<div class="lbrow" style="grid-template-columns:${cols}"><span class="pn">${p.name}</span>${days}<span class="tr mu">${p.pl>0?p.cumGross:'&mdash;'}</span><span class="tr ${tcc}">${p.pl>0?fmtNet(p.cumNet):'&mdash;'}</span></div>`;
+  });
+  document.getElementById('running-totals').innerHTML=h;
+}
+
+function renderSummary(){
+  const el=document.getElementById('summary-content');
+  const totals=getCumTotals().sort((a,b)=>a.pl===0&&b.pl===0?0:a.pl===0?1:b.pl===0?-1:a.cumNet-b.cumNet);
+  const played=totals.filter(p=>p.pl>0);
+  const maxRounds=Math.max(...GOLFERS.map(p=>p.pl),0);
+  const daysLeft=4-maxRounds;
+
+  if(played.length===0){
+    el.innerHTML=`<div class="nodata">No rounds completed yet. Enter scores on the Scoring tab.</div>`;
+    return;
+  }
+
+  const leader=totals[0];
+  let h=`<div class="winner-banner">
+    <div style="font-size:28px;line-height:1">&#127942;</div>
+    <div><div class="wlabel">${daysLeft>0?'Current leader':'Trip winner'}</div>
+    <div class="wname">${leader.name}</div>
+    <div class="wsub">${fmtNet(leader.cumNet)} net vs par &middot; ${leader.pl} round${leader.pl!==1?'s':''} played${daysLeft>0?' &middot; '+daysLeft+' day'+(daysLeft!==1?'s':'')+' to go':''}</div>
+    </div></div>`;
+
+  h+=`<div class="metrics">`;
+  totals.forEach(p=>{
+    const avg=p.pl>0?(p.cumNet/p.pl).toFixed(1):'&mdash;';
+    const vc=p.pl>0&&p.cumNet<0?'win':p.pl>0&&p.cumNet>8?'los':'';
+    h+=`<div class="met"><div class="mlabel">${p.name}</div><div class="mval ${vc}">${p.pl>0?fmtNet(p.cumNet):'&mdash;'}</div><div class="msub">${p.pl>0?'avg '+avg+'/rnd &middot; '+p.pl+' played':'no rounds'}</div></div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sl">Overall standings</div>`;
+  const cols2='28px 1fr 50px 60px 60px 65px 65px';
+  h+=`<div class="card"><div class="lbrow lbhdr" style="grid-template-columns:${cols2}"><span></span><span>Golfer</span><span class="tr">Hdcp</span><span class="tr">Rounds</span><span class="tr">Gross</span><span class="tr">Net total</span><span class="tr">Hdcp &Delta;</span></div>`;
+  totals.forEach((p,i)=>{
+    const pos=i===0&&p.pl>0?`<div class="pos1">1</div>`:`<div class="posn">${i+1}</div>`;
+    const tcc=p.pl===0?'mu':p.cumNet<0?'win':p.cumNet>8?'los':'';
+    const adjs=p.totalAdj===0?'&mdash;':(p.totalAdj>0?'+':'')+p.totalAdj;
+    const adjc=p.totalAdj<0?'win':p.totalAdj>0?'los':'mu';
+    h+=`<div class="lbrow" style="grid-template-columns:${cols2}">${pos}<span class="pn">${p.name}</span><span class="tr mu">${p.finalIdx}</span><span class="tr mu">${p.pl}</span><span class="tr mu">${p.pl>0?p.cumGross:'&mdash;'}</span><span class="tr ${tcc}">${p.pl>0?fmtNet(p.cumNet):'&mdash;'}</span><span class="tr ${adjc}">${adjs}</span></div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sl">Round-by-round net scores</div>`;
+  h+=`<div class="card"><table class="tbl"><thead><tr><th>Golfer</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>Total</th></tr></thead><tbody>`;
+  totals.forEach(p=>{
+    h+=`<tr><td>${p.name}</td>`;
+    S.nets[p.id].forEach(n=>{
+      if(n===null){h+=`<td class="mu">&mdash;</td>`;return;}
+      h+=`<td class="${n<=-3?'win':n>=6?'los':''}">${fmtNet(n)}</td>`;
+    });
+    const tcc=p.pl===0?'mu':p.cumNet<0?'win':p.cumNet>8?'los':'';
+    h+=`<td class="${tcc}" style="font-weight:600">${p.pl>0?fmtNet(p.cumNet):'&mdash;'}</td></tr>`;
+  });
+  h+=`</tbody></table></div>`;
+
+  h+=`<div class="sl">Handicap movement</div>`;
+  h+=`<div class="card"><table class="tbl"><thead><tr><th>Golfer</th><th>Start</th><th>After D1</th><th>After D2</th><th>After D3</th><th>Final</th></tr></thead><tbody>`;
+  totals.forEach(p=>{
+    h+=`<tr><td>${p.name}</td><td class="tr mu">${p.start}</td>`;
+    for(let d=0;d<4;d++){
+      const hasScore=S.nets[p.id][d]!==null;
+      if(!hasScore){h+=`<td class="tr"><span class="hp hp-s">&mdash;</span></td>`;continue;}
+      const adj=S.adjs[p.id][d]||0;
+      const before=S.hdcps[p.id][d];
+      const after=Math.max(p.floor,Math.min(p.ceil,before+adj));
+      const diff=after-before;
+      const cls=diff<0?'hp-d':diff>0?'hp-u':'hp-s';
+      const arr=diff<0?' &darr;':diff>0?' &uarr;':'';
+      h+=`<td class="tr"><span class="hp ${cls}">${after}${arr}</span></td>`;
+    }
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+
+  h+=`<div class="refcard"><div class="rt">Starting handicaps &amp; trip limits</div><div class="refgrid">`;
+  GOLFERS.forEach(p=>{
+    h+=`<div class="refitem"><div class="refname">${p.name}</div>
+    <div class="refrow">Start: <span>${p.start}</span></div>
+    <div class="refrow">Floor: <span>${p.floor}</span></div>
+    <div class="refrow">Ceiling: <span>${p.ceil}</span></div></div>`;
+  });
+  h+=`</div></div>`;
+
+  el.innerHTML=h;
+}
+
+renderBanner();renderGrid();renderTodayLB();renderRunning();
+</script>
+</body>
+</html>
